@@ -1541,22 +1541,25 @@ namespace battleutils
         return dsprand::GetRandomNumber(minPdif, maxPdif);
     }
 
-    int16 CalculateBaseTP(int delay) {
+    int16 CalculateBaseTP(int delay){ 
         int16 x = 1;
         if (delay <= 180) {
-            x = 50 + (((float)delay - 180)*1.5f) / 18;
+            x = 61 + ((delay - 180)*63.f) / 360;
         }
-        else if (delay <= 450) {
-            x = 50 + (((float)delay - 180)*6.5f) / 27;
+        else if (delay <= 540) {
+            x = 61 + ((delay - 180)*88.f) / 360;
         }
-        else if (delay <= 480) {
-            x = 115 + (((float)delay - 450)*1.5f) / 3;
+        else if (delay <= 630) {
+            x = 149 + ((delay - 540)*20.f) / 360;
         }
-        else if (delay <= 530) {
-            x = 130 + (((float)delay - 480)*1.5f) / 5;
+        else if (delay <= 720) {
+            x = 154 + ((delay - 630)*28.f) / 360;
+        }
+        else if (delay <= 900) {
+            x = 161 + ((delay - 720)*24.f) / 360;
         }
         else {
-            x = 145 + (((float)delay - 530)*3.5f) / 47;
+            x = 173 + ((delay - 900)*28.f) / 360;
         }
         return x;
     }
@@ -1811,6 +1814,7 @@ namespace battleutils
 
     int32 TakePhysicalDamage(CBattleEntity* PAttacker, CBattleEntity* PDefender, PHYSICAL_ATTACK_TYPE attackType, int32 damage, bool isBlocked, uint8 slot, uint16 tpMultiplier, CBattleEntity* taChar, bool giveTPtoVictim, bool giveTPtoAttacker, bool isCounter)
     {
+        giveTPtoAttacker = giveTPtoAttacker && !PAttacker->StatusEffectContainer->HasStatusEffect(EFFECT_MEIKYO_SHISUI);
         bool isRanged = (slot == SLOT_AMMO || slot == SLOT_RANGED);
         int32 baseDamage = damage;
         if (PAttacker->StatusEffectContainer->HasStatusEffect(EFFECT_FORMLESS_STRIKES) && !isCounter)
@@ -1881,7 +1885,7 @@ namespace battleutils
                         // Subpower is the remaining damage that can be reflected. When it reaches 0 the effect ends
                         CStatusEffect* reprisalEffect = PDefender->StatusEffectContainer->GetStatusEffect(EFFECT_REPRISAL);
                         int32 blockedDamage = (damage * (100 - absorb)) / 100;
-                        if (PDefender->StatusEffectContainer->HasStatusEffect(EFFECT_INVINCIBLE) || PDefender->StatusEffectContainer->HasStatusEffect(EFFECT_SENTINEL))
+                        if (PDefender->StatusEffectContainer->HasStatusEffect({EFFECT_INVINCIBLE, EFFECT_SENTINEL}))
                         {
                             blockedDamage = (baseDamage * (100 - absorb)) / 100;
                         }
@@ -4928,7 +4932,7 @@ namespace battleutils
         uint32 base = PSpell->getCastTime();
         uint32 cast = base;
 
-        if (PEntity->StatusEffectContainer->HasStatusEffect(EFFECT_HASSO) || PEntity->StatusEffectContainer->HasStatusEffect(EFFECT_SEIGAN))
+        if (PEntity->StatusEffectContainer->HasStatusEffect({EFFECT_HASSO, EFFECT_SEIGAN}))
         {
             cast = cast * 2.0f;
         }
@@ -4948,7 +4952,7 @@ namespace battleutils
             }
             else if (applyArts)
             {
-                if (PEntity->StatusEffectContainer->HasStatusEffect(EFFECT_DARK_ARTS) || PEntity->StatusEffectContainer->HasStatusEffect(EFFECT_ADDENDUM_BLACK))
+                if (PEntity->StatusEffectContainer->HasStatusEffect({EFFECT_DARK_ARTS, EFFECT_ADDENDUM_BLACK}))
                 {
                     // Add any "Grimoire: Reduces spellcasting time" bonuses
                     cast = cast * (1.0f + (PEntity->getMod(MOD_BLACK_MAGIC_CAST) + PEntity->getMod(MOD_GRIMOIRE_SPELLCASTING)) / 100.0f);
@@ -4974,7 +4978,7 @@ namespace battleutils
             }
             else if (applyArts)
             {
-                if (PEntity->StatusEffectContainer->HasStatusEffect(EFFECT_LIGHT_ARTS) || PEntity->StatusEffectContainer->HasStatusEffect(EFFECT_ADDENDUM_WHITE))
+                if (PEntity->StatusEffectContainer->HasStatusEffect({EFFECT_LIGHT_ARTS, EFFECT_ADDENDUM_WHITE}))
                 {
                     // Add any "Grimoire: Reduces spellcasting time" bonuses
                     cast = cast * (1.0f + (PEntity->getMod(MOD_WHITE_MAGIC_CAST) + PEntity->getMod(MOD_GRIMOIRE_SPELLCASTING)) / 100.0f);
@@ -5136,7 +5140,7 @@ namespace battleutils
             recast *= 1.25;
         }
 
-        if (PEntity->StatusEffectContainer->HasStatusEffect(EFFECT_HASSO) || PEntity->StatusEffectContainer->HasStatusEffect(EFFECT_SEIGAN))
+        if (PEntity->StatusEffectContainer->HasStatusEffect({EFFECT_HASSO, EFFECT_SEIGAN}))
         {
             recast *= 1.5;
         }
@@ -5172,7 +5176,7 @@ namespace battleutils
             }
             if (applyArts)
             {
-                if (PEntity->StatusEffectContainer->HasStatusEffect(EFFECT_DARK_ARTS) || PEntity->StatusEffectContainer->HasStatusEffect(EFFECT_ADDENDUM_BLACK))
+                if (PEntity->StatusEffectContainer->HasStatusEffect({EFFECT_DARK_ARTS, EFFECT_ADDENDUM_BLACK}))
                 {
                     // Add any "Grimoire: Reduces spellcasting time" bonuses
                     recast *= (1.0f + (PEntity->getMod(MOD_BLACK_MAGIC_RECAST) + PEntity->getMod(MOD_GRIMOIRE_SPELLCASTING)) / 100.0f);
@@ -5211,7 +5215,7 @@ namespace battleutils
             }
             if (applyArts)
             {
-                if (PEntity->StatusEffectContainer->HasStatusEffect(EFFECT_LIGHT_ARTS) || PEntity->StatusEffectContainer->HasStatusEffect(EFFECT_ADDENDUM_WHITE))
+                if (PEntity->StatusEffectContainer->HasStatusEffect({EFFECT_LIGHT_ARTS, EFFECT_ADDENDUM_WHITE}))
                 {
                     // Add any "Grimoire: Reduces spellcasting time" bonuses
                     recast *= (1.0f + (PEntity->getMod(MOD_WHITE_MAGIC_RECAST) + PEntity->getMod(MOD_GRIMOIRE_SPELLCASTING)) / 100.0f);

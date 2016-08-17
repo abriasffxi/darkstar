@@ -392,7 +392,7 @@ namespace charutils
             length = 0;
             int8* keyitems = nullptr;
             Sql_GetData(SqlHandle, 15, &keyitems, &length);
-            memcpy(PChar->keys.keysList, keyitems, (length > sizeof(PChar->keys) ? sizeof(PChar->keys) : length));
+            memcpy((void*)&PChar->keys, keyitems, (length > sizeof(PChar->keys) ? sizeof(PChar->keys) : length));
 
             length = 0;
             int8* abilities = nullptr;
@@ -2481,11 +2481,8 @@ namespace charutils
             uint16 skillBonus = 0;
 
             // apply arts bonuses
-            if ((i >= 32 && i <= 35 && (PChar->StatusEffectContainer->HasStatusEffect(EFFECT_LIGHT_ARTS) ||
-                PChar->StatusEffectContainer->HasStatusEffect(EFFECT_ADDENDUM_WHITE)))
-                ||
-                (i >= 35 && i <= 37 && (PChar->StatusEffectContainer->HasStatusEffect(EFFECT_DARK_ARTS) ||
-                    PChar->StatusEffectContainer->HasStatusEffect(EFFECT_ADDENDUM_BLACK))))
+            if ((i >= 32 && i <= 35 && PChar->StatusEffectContainer->HasStatusEffect({EFFECT_LIGHT_ARTS, EFFECT_ADDENDUM_WHITE})) ||
+                (i >= 35 && i <= 37 && PChar->StatusEffectContainer->HasStatusEffect({EFFECT_DARK_ARTS, EFFECT_ADDENDUM_BLACK})))
             {
                 uint16 artsSkill = battleutils::GetMaxSkill(SKILL_ENH, JOB_RDM, PChar->GetMLevel()); //B+ skill
                 uint16 skillCapD = battleutils::GetMaxSkill((SKILLTYPE)i, JOB_SCH, PChar->GetMLevel()); // D skill cap
@@ -2532,8 +2529,7 @@ namespace charutils
                     skillBonus += dsp_max(artsSkill - currentSkill, 0);
                 }
 
-                if (PChar->StatusEffectContainer->HasStatusEffect(EFFECT_LIGHT_ARTS) ||
-                    PChar->StatusEffectContainer->HasStatusEffect(EFFECT_ADDENDUM_WHITE))
+                if (PChar->StatusEffectContainer->HasStatusEffect({EFFECT_LIGHT_ARTS, EFFECT_ADDENDUM_WHITE}))
                 {
                     skillBonus += PChar->getMod(MOD_LIGHT_ARTS_SKILL);
                 }
@@ -2750,29 +2746,34 @@ namespace charutils
     *																		*
     ************************************************************************/
 
-    int32 hasKeyItem(CCharEntity* PChar, uint16 KeyItemID)
+    bool hasKeyItem(CCharEntity* PChar, uint16 KeyItemID)
     {
-        return hasBit(KeyItemID, PChar->keys.keysList, sizeof(PChar->keys.keysList));
+        auto table = KeyItemID / 512;
+        return PChar->keys.tables[table].keyList[KeyItemID % 512];
     }
 
-    int32 seenKeyItem(CCharEntity* PChar, uint16 KeyItemID)
+    bool seenKeyItem(CCharEntity* PChar, uint16 KeyItemID)
     {
-        return hasBit(KeyItemID, PChar->keys.seenList, sizeof(PChar->keys.seenList));
+        auto table = KeyItemID / 512;
+        return PChar->keys.tables[table].keyList[KeyItemID % 512];
     }
 
-    int32 unseenKeyItem(CCharEntity* PChar, uint16 KeyItemID)
+    void unseenKeyItem(CCharEntity* PChar, uint16 KeyItemID)
     {
-        return delBit(KeyItemID, PChar->keys.seenList, sizeof(PChar->keys.seenList));
+        auto table = KeyItemID / 512;
+        PChar->keys.tables[table].seenList[KeyItemID % 512] = false;
     }
 
-    int32 addKeyItem(CCharEntity* PChar, uint16 KeyItemID)
+    void addKeyItem(CCharEntity* PChar, uint16 KeyItemID)
     {
-        return addBit(KeyItemID, PChar->keys.keysList, sizeof(PChar->keys.keysList));
+        auto table = KeyItemID / 512;
+        PChar->keys.tables[table].keyList[KeyItemID % 512] = true;
     }
 
-    int32 delKeyItem(CCharEntity* PChar, uint16 KeyItemID)
+    void delKeyItem(CCharEntity* PChar, uint16 KeyItemID)
     {
-        return delBit(KeyItemID, PChar->keys.keysList, sizeof(PChar->keys.keysList));
+        auto table = KeyItemID / 512;
+        PChar->keys.tables[table].keyList[KeyItemID % 512] = false;
     }
 
     /************************************************************************
@@ -3860,7 +3861,7 @@ namespace charutils
         const int8* fmtQuery = "UPDATE chars SET keyitems = '%s' WHERE charid = %u;";
 
         int8 keyitems[sizeof(PChar->keys) * 2 + 1];
-        Sql_EscapeStringLen(SqlHandle, keyitems, (const int8*)PChar->keys.keysList, sizeof(PChar->keys));
+        Sql_EscapeStringLen(SqlHandle, keyitems, (const int8*)&PChar->keys, sizeof(PChar->keys));
 
         Sql_Query(SqlHandle, fmtQuery, keyitems, PChar->id);
     }
@@ -4444,14 +4445,14 @@ namespace charutils
         }
         if (PAbility->getAddType() & ADDTYPE_LIGHT_ARTS)
         {
-            if (!PChar->StatusEffectContainer->HasStatusEffect(EFFECT_LIGHT_ARTS) && !PChar->StatusEffectContainer->HasStatusEffect(EFFECT_ADDENDUM_WHITE))
+            if (!PChar->StatusEffectContainer->HasStatusEffect({EFFECT_LIGHT_ARTS, EFFECT_ADDENDUM_WHITE}))
             {
                 return false;
             }
         }
         if (PAbility->getAddType() & ADDTYPE_DARK_ARTS)
         {
-            if (!PChar->StatusEffectContainer->HasStatusEffect(EFFECT_DARK_ARTS) && !PChar->StatusEffectContainer->HasStatusEffect(EFFECT_ADDENDUM_BLACK))
+            if (!PChar->StatusEffectContainer->HasStatusEffect({EFFECT_DARK_ARTS, EFFECT_ADDENDUM_BLACK}))
             {
                 return false;
             }

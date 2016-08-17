@@ -2814,7 +2814,7 @@ void SmallPacket0x063(map_session_data_t* session, CCharEntity* PChar, CBasicPac
 void SmallPacket0x064(map_session_data_t* session, CCharEntity* PChar, CBasicPacket data)
 {
     uint8 KeyTable = RBUFB(data, (0x4A));
-    memcpy(PChar->keys.seenList + (0x40 * KeyTable), data[0x08], 0x40);
+    memcpy(&PChar->keys.tables[KeyTable].seenList, data[0x08], 0x40);
 
     charutils::SaveKeyItems(PChar);
     return;
@@ -3866,8 +3866,8 @@ void SmallPacket0x0B6(map_session_data_t* session, CCharEntity* PChar, CBasicPac
         PChar->pushPacket(new CMessageBasicPacket(PChar, PChar, 0, 0, 316));
         return;
     }
+    string_t RecipientName = string_t(data[5], 15);
 
-    string_t RecipientName = data[5];
     int8 packetData[64];
     strncpy(packetData + 4, RecipientName.c_str(), RecipientName.length() + 1);
     WBUFL(packetData, 0) = PChar->id;

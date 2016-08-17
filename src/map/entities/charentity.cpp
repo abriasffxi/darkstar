@@ -632,8 +632,7 @@ void CCharEntity::OnCastFinished(CMagicState& state, action_t& action)
                     actionTarget.additionalEffect = effect;
 
                 }
-                if (StatusEffectContainer->HasStatusEffect(EFFECT_SEKKANOKI) ||
-                    StatusEffectContainer->HasStatusEffect(EFFECT_MEIKYO_SHISUI))
+                if (StatusEffectContainer->HasStatusEffect({EFFECT_SEKKANOKI, EFFECT_MEIKYO_SHISUI}))
                 {
                     health.tp = (health.tp > 1000 ? health.tp - 1000 : 0);
                 }
@@ -1330,7 +1329,6 @@ void CCharEntity::OnRangedAttack(CRangeState& state, action_t& action)
     //        return;
     //    }
     //}
-    static_cast<CPlayerController*>(PAI->GetController())->setNextRangedTime(server_clock::now() + 1s + std::chrono::milliseconds(this->GetAmmoDelay()));
 }
 
 bool CCharEntity::IsMobOwner(CBattleEntity* PBattleTarget)
