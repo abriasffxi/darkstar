@@ -44,11 +44,11 @@ function onEventUpdate(player,csid,option)
     -- printf("onUpdateOPTION: %u",option);
 
     if (player:getNation() == 0) then
-        inventory = SandInv;
-        size = table.getn(SandInv);
+        inventory = WindInv;
+        size = table.getn(WindInv);
     elseif (player:getNation() == 1) then
-        inventory = BastInv;
-        size = table.getn(BastInv);
+        inventory = WindInv;
+        size = table.getn(WindInv);
     else
         inventory = WindInv;
         size = table.getn(WindInv);
