@@ -17,15 +17,23 @@ local extracted = {
         {1080,0x0281}, -- 10.80% Tin Ore
         {1050,0x02E0}, -- 10.50% Silver Ore
         {0970,0x0283}, -- 9.70% Iron Ore
-        {0680,0x0660}, -- 6.80% Moblin Mail
-        {0630,0x0659}, -- 6.30% Moblin Helm
-        {0600,0x0666}, -- 6.00% Moblin Mask
-        {0570,0x0238}, -- 5.70% Goblin Die
-        {0571,0x065F}, -- 5.70% Moblin Armor
+    --   {0680,0x0660}, -- 6.80% Moblin Mail
+    --   {0630,0x0659}, -- 6.30% Moblin Helm
+    --    {0600,0x0666}, -- 6.00% Moblin Mask
+    --    {0570,0x0238}, -- 5.70% Goblin Die
+    --    {0571,0x065F}, -- 5.70% Moblin Armor
         {0080,0x0285}, -- 0.80% Darksteel Ore
         {0081,0x0284}, -- 0.80% Mythril Ore
         {0070,0x02E1}, -- 0.70% Gold Ore
-        {0071,0x02E2} -- 0.70% Platium Ore
+        {0071,0x02E2}, -- 0.70% Platium Ore
+        {0150,0x04E7}, -- fire ore
+        {0151,0x04E8}, -- ice ore
+        {0152,0x04E9}, -- wind ore
+        {0153,0x04EA}, -- earth ore
+        {0154,0x04EB}, -- lightning ore
+        {0155,0x04EC}, -- water ore
+        {0156,0x04ED}, -- light ore
+        {0157,0x04EE} -- dark ore
 
     },
     [12] = {  -- Newton
@@ -100,8 +108,8 @@ local extracted = {
         {1320,0x0282}, -- 13.20% Zinc Ore
         {0840,0x0300}, -- 8.40% Flint Stone
         {0360,0x02E0}, -- 3.6% Silver Ore
-        {0301,0x0301}, -- 1.7% Red Rock
-        {0300,0x0285}, -- 1.5% Darksteel Ore
+        {0171,0x0301}, -- 1.7% Red Rock
+        {0150,0x0285}, -- 1.5% Darksteel Ore
         {0110,0x02E1} -- 1.1% Gold Ore
 
     },
@@ -113,7 +121,7 @@ local extracted = {
         {0900,0x0284}, -- 9.00% Mythril Ore
         {0900,0x02E0}, -- 9.00% Silver Ore
         {0800,0x0280}, -- 8.00% Copper Ore
-        {1200,0x02E2} --  1.00% Platium Ore
+        {0100,0x02E2} --  1.00% Platium Ore
 --      {0000,0x0000} -- Sturdy metal strip 16.7% for a quest
 
     },
@@ -125,7 +133,7 @@ local extracted = {
         {1120,0x0281}, -- 11.20% Tin Ore
         {0550,0x07C0}, -- 5.5% Snapping Mole
         {0190,0x02E0}, -- 1.9% Silver Ore
-        {0180,0x0285} -- 0.4% Darksteel Ore
+        {0040,0x0285} -- 0.4% Darksteel Ore
 --      {0000,0x0000} -- Sturdy metal strip 16.7% for a quest
     
     },
@@ -138,23 +146,23 @@ local extracted = {
         {0810,0x02E0}, -- 8.10% Silver Ore
         {0600,0x0285}, -- 5.9% Darksteel Ore
         {0400,0x0301}, -- 4% Red Rock
-        {1280,0x02E1}, -- 1.8% Gold Ore
-        {1280,0x0284} -- 0.80% Mythril Ore
+        {0180,0x02E1}, -- 1.8% Gold Ore
+        {0080,0x0284} -- 0.80% Mythril Ore
 --      {0000,0x0000} -- Sturdy metal strip 16.7% for a quest
     
     },
     [205] = { -- Ifrit's Cauldron
         {0020,1255},
         {0840,0x0300}, -- 8.40% Flint Stone
-        {0950,0x0283}, -- 14.50% Iron Ore
+        {1450,0x0283}, -- 14.50% Iron Ore
         {0980,0x0454}, -- 9.80% Pinch of Sulfur
         {0700,0x43A4}, -- 7.0% Bomb Arm
         {0500,0x03A0}, -- 5.0% Bomb Ash
         {0600,0x0483}, -- 6.0% Iron Sand
         {0250,0x0286}, -- 2.5% Adaman Ore
         {0690,0x0285}, -- 6.9% Darksteel Ore
-        {0000,0x084E}, -- 0.0% Orpiment
-        {0250,0x02E3}, -- 0.0% Orichalcum Ore
+        {0150,0x084E}, -- 0.0% Orpiment
+        {0251,0x02E3}, -- 0.0% Orichalcum Ore
         {0400,0x0301} -- 4% Red Rock
 --      {0000,0x0000} -- Sturdy metal strip 16.7% for a quest
     }
