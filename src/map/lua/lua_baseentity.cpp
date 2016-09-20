@@ -8740,6 +8740,12 @@ inline int32 CLuaBaseEntity::useMobAbility(lua_State* L)
     {
         auto skillid {lua_tointeger(L, 1)};
         CBattleEntity* PTarget {nullptr};
+        auto PMobSkill {battleutils::GetMobSkill(skillid)};
+
+        if (!PMobSkill)
+        {
+            return 0;
+        }
 
         if (!lua_isnil(L, 2) && lua_isuserdata(L, 2))
         {
@@ -8747,11 +8753,16 @@ inline int32 CLuaBaseEntity::useMobAbility(lua_State* L)
             PTarget = (CBattleEntity*)PLuaBaseEntity->m_PBaseEntity;
         }
 
-        m_PBaseEntity->PAI->QueueAction(queueAction_t(0ms, true, [PTarget, skillid](auto PEntity) {
+        m_PBaseEntity->PAI->QueueAction(queueAction_t(0ms, true, [PTarget, skillid, PMobSkill](auto PEntity) {
             if (PTarget)
                 PEntity->PAI->MobSkill(PTarget->targid, skillid);
             else if (dynamic_cast<CMobEntity*>(PEntity))
-                PEntity->PAI->MobSkill(static_cast<CMobEntity*>(PEntity)->GetBattleTargetID(), skillid);
+            {
+                if (PMobSkill->getValidTargets() & TARGET_ENEMY)
+                    PEntity->PAI->MobSkill(static_cast<CMobEntity*>(PEntity)->GetBattleTargetID(), skillid);
+                else if (PMobSkill->getValidTargets() & TARGET_SELF)
+                    PEntity->PAI->MobSkill(PEntity->targid, skillid);
+            }
         }));
     }
     else
@@ -10101,7 +10112,6 @@ inline int32 CLuaBaseEntity::setAllegiance(lua_State* L)
 inline int32 CLuaBaseEntity::stun(lua_State* L)
 {
     DSP_DEBUG_BREAK_IF(m_PBaseEntity == nullptr);
-    DSP_DEBUG_BREAK_IF(m_PBaseEntity->objtype != TYPE_MOB);
     DSP_DEBUG_BREAK_IF(lua_isnil(L, 1) || !lua_isnumber(L, 1));
 
     m_PBaseEntity->PAI->Inactive(std::chrono::milliseconds(lua_tointeger(L, 1)), false);
@@ -10782,6 +10792,56 @@ int32 CLuaBaseEntity::getAutomatonHead(lua_State* L)
     return 1;
 }
 
+int32 CLuaBaseEntity::getDropID(lua_State* L)
+{
+    DSP_DEBUG_BREAK_IF(m_PBaseEntity == nullptr);
+    DSP_DEBUG_BREAK_IF(m_PBaseEntity->objtype != TYPE_MOB);
+
+    lua_pushinteger(L, static_cast<CMobEntity*>(m_PBaseEntity)->m_DropID);
+    return 1;
+}
+
+int32 CLuaBaseEntity::setDropID(lua_State* L)
+{
+    DSP_DEBUG_BREAK_IF(m_PBaseEntity == nullptr);
+    DSP_DEBUG_BREAK_IF(m_PBaseEntity->objtype != TYPE_MOB);
+    DSP_DEBUG_BREAK_IF(lua_isnil(L, 1) || !lua_isnumber(L, 1));
+
+    static_cast<CMobEntity*>(m_PBaseEntity)->m_DropID = lua_tointeger(L, 1);
+    return 0;
+}
+
+int32 CLuaBaseEntity::resetAI(lua_State* L)
+{
+    DSP_DEBUG_BREAK_IF(m_PBaseEntity == nullptr);
+
+    m_PBaseEntity->PAI->Reset();
+    return 0;
+}
+
+//get another entity by targid (using instance and zone of this entity)
+int32 CLuaBaseEntity::getEntity(lua_State* L)
+{
+    DSP_DEBUG_BREAK_IF(m_PBaseEntity == nullptr);
+    DSP_DEBUG_BREAK_IF(lua_isnil(L, 1) || !lua_isnumber(L, 1));
+    
+    auto PEntity {m_PBaseEntity->GetEntity(lua_tointeger(L,1))};
+    if (PEntity)
+    {
+        lua_getglobal(L, CLuaBaseEntity::className);
+        lua_pushstring(L, "new");
+        lua_gettable(L, -2);
+        lua_insert(L, -2);
+        lua_pushlightuserdata(L, (void*)PEntity);
+        lua_pcall(L, 2, 1, 0);
+    }
+    else
+    {
+        lua_pushnil(L);
+    }
+    return 1;
+}
+
 //==========================================================//
 
 const int8 CLuaBaseEntity::className[] = "CBaseEntity";
@@ -11254,5 +11314,9 @@ Lunar<CLuaBaseEntity>::Register_t CLuaBaseEntity::methods[] =
     LUNAR_DECLARE_METHOD(CLuaBaseEntity,recalculateStats),
     LUNAR_DECLARE_METHOD(CLuaBaseEntity,checkImbuedItems),
     LUNAR_DECLARE_METHOD(CLuaBaseEntity,getNearbyEntities),
+    LUNAR_DECLARE_METHOD(CLuaBaseEntity,getDropID),
+    LUNAR_DECLARE_METHOD(CLuaBaseEntity,setDropID),
+    LUNAR_DECLARE_METHOD(CLuaBaseEntity,resetAI),
+    LUNAR_DECLARE_METHOD(CLuaBaseEntity,getEntity),
     {nullptr,nullptr}
 };

@@ -38,8 +38,8 @@
 CMagicState::CMagicState(CBattleEntity* PEntity, uint16 targid, uint16 spellid, uint8 flags) :
     CState(PEntity, targid),
     m_PEntity(PEntity),
-    m_flags(flags),
-    m_PSpell(nullptr)
+    m_PSpell(nullptr),
+    m_flags(flags)
 {
     CSpell* PSpell = spell::GetSpell(spellid);
 
@@ -290,6 +290,8 @@ void CMagicState::ApplyEnmity(CBattleEntity* PTarget, int ce, int ve)
                 ((CMobEntity*)PTarget)->updatemask |= UPDATE_STATUS;
             }
             ((CMobEntity*)PTarget)->PEnmityContainer->UpdateEnmity(m_PEntity, ce, ve);
+            if (PTarget && ((CMobEntity*)PTarget)->m_HiPCLvl < m_PEntity->GetMLevel())
+                ((CMobEntity*)PTarget)->m_HiPCLvl = m_PEntity->GetMLevel();
             enmityApplied = true;
         }
     }
