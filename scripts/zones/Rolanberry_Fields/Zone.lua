@@ -61,9 +61,7 @@ function onInitialize(zone)
     local rift = GetNPCByID(17228385);
 
     book:setPos(-98,-9,-655,216);
-    if (rift ~= nil) then
-        rift:setPos(-90.707,-7.899,-663.99,216);
-    end    
+    rift:setPos(-90.707,-7.899,-663.99,216);
     SetFieldManual(manuals);
 
     -- Simurgh
