@@ -15,8 +15,7 @@ require("scripts/zones/Aht_Urhgan_Whitegate/TextIDs");
 -----------------------------------
 
 function onTrade(player,npc,trade)
-    --[[
-    local trophies =
+   local trophies =
     {
         2616, 2617, 2618, 2613, 2614, 2615, 2610, 2611, 2612,
         2609, 2626, 2627, 2628, 2623, 2624, 2625, 2620, 2621,
@@ -68,7 +67,7 @@ function onTrade(player,npc,trade)
             end
         end
     end
-    ]]
+    --]]
 end;
 
 -----------------------------------
@@ -76,7 +75,6 @@ end;
 -----------------------------------
 
 function onTrigger(player,npc)
-    --[[
     if (player:getVar("ZeniStatus") == 0) then
         player:startEvent(0x038c);
     else
@@ -121,7 +119,7 @@ function onTrigger(player,npc)
 
         player:startEvent(0x038D,param);
     end
-    ]]
+    --]]
 end;
 
 -----------------------------------
@@ -131,7 +129,6 @@ end;
 function onEventUpdate(player,csid,option)
     -- printf("CSID: %u",csid);
     -- printf("updateRESULT: %u",option);
-    --[[
     local lures =
     {
         2580, 2581, 2582, 2577, 2578, 2579, 2574, 2575, 2576,
@@ -241,7 +238,6 @@ function onEventUpdate(player,csid,option)
             end
         end
     end
-    ]]
 end;
 
 -----------------------------------
@@ -251,10 +247,8 @@ end;
 function onEventFinish(player,csid,option)
     -- printf("CSID: %u",csid);
     -- printf("finishRESULT: %u",option);
-    --[[
     if (csid == 0x038c) then
         player:setVar("ZeniStatus",1);
         player:addCurrency("zeni_point", 2000);
     end
-    ]]
 end;
