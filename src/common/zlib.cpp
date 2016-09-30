@@ -204,6 +204,12 @@ uint32 zlib_decompress(const int8 *in, const uint32 in_sz, int8 *out, const uint
     if (in[0] != 1)
     {
         ShowWarning("zlib_decompress: invalid compressed data\n");
+        //debug code, remove after dump
+        FILE *f = fopen("/tmp/map.dec", "wb");
+        fwrite(in, 1, in_sz, f);
+        fclose(f);
+        abort();
+        //end debug code
         return -1;
     }
 
