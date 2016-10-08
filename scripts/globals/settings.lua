@@ -32,6 +32,8 @@ ENABLE_ROV     = 0;
 -- This feature correlates to the required_expansion column in the SQL files
 RESTRICT_BY_EXPANSION = 1;
 
+ENABLE_VOIDWATCH = 0; -- Not an expansion, but has its own storyline.
+
 -- CHARACTER CONFIG
 INITIAL_LEVEL_CAP = 50; -- The initial level cap for new players.  There seems to be a hardcap of 255.
 MAX_LEVEL = 75; -- Level max of the server, lowers the attainable cap by disabling Limit Break quests.
