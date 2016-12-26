@@ -380,7 +380,7 @@ end;
 
 function pickaxeBreak(player,trade)
     local broken = 0;
-    if (math.random(0,100) <= MINING_BREAK_CHANCE) then
+    if (math.random(1,100) <= MINING_BREAK_CHANCE) then
         broken = 1;
         player:tradeComplete();
     end;
